@@ -12,9 +12,9 @@ f_x = f(x)
 mpl.plot(x,f_x)
 mpl.show()
 
-MIN = -3
-MAX = 3
-TOLERANCE = 1e-3
+MIN = -10
+MAX = -5
+TOLERANCE = 1e-6
 
 
 # helmingunar aðferð sem finnur rót e. bysection = binery search
