@@ -1,23 +1,16 @@
-import matplotlib.pyplot as mpl
+import matplotlib.pyplot as plt
 import numpy as np
 
 def f(x):
     return 2*x**4 + 23*x**3 + 45*x**2 + 60*x + 50
 
 
-# plot
-x = np.linspace(-20,10,20)
-f_x = f(x)
-# huh
-mpl.plot(x,f_x)
-mpl.show()
-
 MIN = -10
 MAX = -5
 TOLERANCE = 1e-6
 
 
-# helmingunar aðferð sem finnur rót e. bysection = binery search
+# helmingunar aðferð sem finnur rót e. by-section method = binery search
 # í staðin fyrir minna en eða meira en notum við margföldun til að tékka hvort fallið hafi mismunandi formerki
 def root_binary_search(I_MIN, I_MAX, tolerance):
     min_bound = I_MIN
@@ -42,4 +35,9 @@ def root_binary_search(I_MIN, I_MAX, tolerance):
     return (min_bound+max_bound)/2
 
 print(root_binary_search(MIN, MAX, TOLERANCE))
+
+
+
+
+
 

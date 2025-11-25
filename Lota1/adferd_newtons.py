@@ -4,7 +4,7 @@ import numpy as np
 def f(x):
     return 2*x**4+23*x**3+45*x**2+60*x+50
 
-def df(x):##sssSSS
+def df(x):
     return 8*x**3+69*x**2+90*x+60
 
 # plot
