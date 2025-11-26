@@ -1,7 +1,7 @@
 import numpy as np
-import pandas as pd
 import cmath, math
 import matplotlib.pyplot as plt
+
 allar_roots = np.roots([2, 23, 45, 60, 50])
 
 def dp(s):

@@ -24,6 +24,7 @@ def Newton_Fraktalar(z0, roots, tol=1e-10, maxit=1000):
             if abs(z - r) < tol:
                 return i
     return -1 
+    
 z0 = 5 + 7j
 result = Newton_Fraktalar(z0, allar_roots)
 print("Rót nr", result)
