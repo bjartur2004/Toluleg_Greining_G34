@@ -24,8 +24,6 @@ def adferd_newtons(I_guess, tolerance):
     while abs(x-x_old)>tolerance:
         x_old = x
         x = x_old - f(x_old) / df(x_old)
-        print(f"x_{x} = {x:.12f}")   # prentar hvert skref
-        x += 1
     return x
 
 
