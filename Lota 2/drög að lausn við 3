@@ -1,0 +1,53 @@
+import numpy as np
+
+p1 = 4.2e6
+QB = 7.0
+nu = 1e-3
+r = 0.05
+L = 100
+G = (np.pi * r**4) / (8 * nu * L)
+
+# A, B, C úr lið 2:
+A = 1.3209447623073836       
+B = 4.015670949654586  
+C = 9.45       
+
+omega = 2*np.pi/24 
+
+A_fylki = np.array([
+    [ 3, -1, -1,  0,  0],
+    [ 1, -2,  0,  1,  0],
+    [ 1,  0, -4,  1,  2],
+    [ 0,  3,  3, -8,  2],
+    [ 0,  0,  6,  2, -11]
+])
+
+times = np.linspace(0, 24, 100)
+
+q1A_gildi = []
+
+for t in times:
+    qE0_t = A*np.cos(omega*t) + B*np.sin(omega*t) + C
+
+    pE = qE0_t / G
+
+    
+    b = np.array([
+        p1,
+        -QB / G,
+        0,
+        0,
+        -pE * 11       # úr jöfnu 12 eftir að pE er sett inn
+    ])
+
+    pA, pB, pC, pD, pE_calc = np.linalg.solve(A_fylki, b)
+
+
+    q1A_t = G * (p1 - pA)
+    q1A_gildi.append(q1A_t)
+
+q1A_gildi = np.array(q1A_gildi)
+
+
+print("q1A(t) fyrir 100 tímapunkta:")
+print(q1A_gildi)
