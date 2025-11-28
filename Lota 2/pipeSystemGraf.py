@@ -1,16 +1,23 @@
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 import networkx as nx
 import numpy as np
 
 
 def plot_pressure_flow_graph(edges, pressures, positions,
                              node_cmap="viridis", arrow_scale=5):
-    """
-    edges: list of (u, v, flow_value)
-    pressures: dict {node: pressure}
-    positions: dict {node: (x, y)}
-    """
 
+    if node_cmap == "bright_plasma":
+        n_colors = 256
+        key_colors = [
+            (0.0, (0.15, 0.35, 1.00)),    
+            (0.30,(0.75, 0.10, 0.70)),  
+            (0.75,(0.95, 0.50, 0.05)),   
+            (1.0, (1.00, 0.90, 0.20))      
+        ]
+    node_cmap = mcolors.LinearSegmentedColormap.from_list("bright_plasma", key_colors, N=n_colors)
+
+    
     G = nx.DiGraph()
     for u, v, flow in edges:
         G.add_edge(u, v, flow=flow)
@@ -21,34 +28,28 @@ def plot_pressure_flow_graph(edges, pressures, positions,
 
     fig, ax = plt.subplots(figsize=(10, 8))
 
-    # Draw nodes
+    # Draw nodes using the colormap object
     nodes = nx.draw_networkx_nodes(
         G,
         pos=positions,
         node_color=pressure_values,
         cmap=node_cmap,
-        node_size=1200,
+        node_size=1800,
         edgecolors="black",
         ax=ax
     )
 
     # Draw node labels
-    labels = {n: f"{pressures[n]:.2f}" for n in G.nodes()}
+    labels = {n: f"{pressures[n]:.1f}" for n in G.nodes()}
     nx.draw_networkx_labels(G, positions, labels, ax=ax, font_size=10)
 
-    # Draw arrows using annotate() manually
+    # Draw edges with flow arrows and labels
     flows = [abs(G[u][v]["flow"]) for u, v in G.edges()]
     max_flow = max(flows) if flows else 1.0
 
     for (u, v, flow) in edges:
         alpha = 0.2 + 0.8 * abs(flow) / max_flow
-
-        if flow >= 0:
-            start = positions[u]
-            end   = positions[v]
-        else:
-            start = positions[v]
-            end   = positions[u]
+        start, end = (positions[u], positions[v]) if flow >= 0 else (positions[v], positions[u])
 
         ax.annotate(
             "",
@@ -59,37 +60,31 @@ def plot_pressure_flow_graph(edges, pressures, positions,
                 linewidth=4,
                 color="black",
                 alpha=alpha,
-                shrinkA=15,
-                shrinkB=15
+                shrinkA=20,
+                shrinkB=20
             )
         )
 
-        # Place flow label
-        mid = (
-            ((positions[u][0] + positions[v][0]) / 2)+0.1,
-            ((positions[u][1] + positions[v][1]) / 2)+0.05
-        )
+        mid = ((positions[u][0]+positions[v][0])/2 - 0.06,
+               (positions[u][1]+positions[v][1])/2 - 0.01)
+        ax.text(mid[0], mid[1], f"{flow:.3f}",
+                fontsize=9,
+                bbox=dict(facecolor="white", alpha=0.8, edgecolor="none"))
 
-        ax.text(
-            mid[0], mid[1],
-            f"{flow:.2f}",
-            fontsize=9,
-            bbox=dict(facecolor="white", alpha=0.0, edgecolor="none")
-        )
-
-    # Add colorbar properly
+    # Add colorbar with proper colormap
     sm = plt.cm.ScalarMappable(cmap=node_cmap, norm=norm)
     sm.set_array([])
-
-    fig.colorbar(sm, ax=ax, label="Pressure")
+    fig.colorbar(sm, ax=ax, label="Þrýstingur [MPa]")
 
     ax.set_aspect("equal")
-    ax.set_title("Pipe Network: Node Pressure + Flow Visualization")
+    ax.set_title("Nóðu þrýstingar [MPa] og Flæði [m^3/s]")
+    ax.margins(0.15)
     plt.tight_layout()
     plt.show()
 
+
 if __name__ == "__main__":
-    edges = [ # directon defines the positive flow direction. arrow will be flipped if negative
+    edges = [
         ("A", "B", 10),
         ("B", "C", 4),
         ("A", "C", 2),
@@ -110,4 +105,4 @@ if __name__ == "__main__":
         "D": (3, 1)
     }
 
-    plot_pressure_flow_graph(edges, pressures, positions)
+    plot_pressure_flow_graph(edges, pressures, positions, node_cmap="bright_plasma")

@@ -5,18 +5,21 @@ draw_graph = True
 if draw_graph: # fyrir yfirfarara ef þið viljið keyra án þess að hafa auka graf kóðann:)
     from pipeSystemGraf import plot_pressure_flow_graph
 
+QB = 7
+p1 = 4.2*10**6
+p0 = 0
+
+p = 998
+L = 100
+f = 0.02
+r = 0.05
+K = (8*f*p*L)/(32*math.pi**2 * r**5)
+
+
+
 def F(X):
+    global K, p1, p0, QB
     q1A, qAB, qAC, qBD, qCD, qCE, qDE, qE0 = X
-    QB = 7
-    p1 = 4.2*10**6
-    p0 = 0
-
-    p = 998
-    L = 100
-    f = 0.02
-    r = 0.05
-    K = (8*f*p*L)/(32*math.pi**2 * r**5)
-
     F = np.array([
         q1A - qAB - qAC,
         QB  + qAB - qBD,
@@ -59,60 +62,66 @@ def newtonSearch(F, J, x0, tolerance):
     while np.linalg.norm(x-x_old)>tolerance:
         x_old = x
         x = x_old - np.linalg.solve(J(x), F(x))
-        #print("  ".join(f"{xi:.3f}" for xi in x))   # prentar hvert skref
     return x
 
 
 x0 = [1 for i in range(8)]
 tolerance = 1e-10
 
-x_lausn = newtonSearch(F,J,x0, tolerance)
-F_lausn = F(x_lausn)
+q_lausn = newtonSearch(F,J,x0, tolerance)
+q1A, qAB, qAC, qBD, qCD, qCE, qDE, qE0 = q_lausn
+
+pA = p1 - K*q1A*abs(q1A)
+pB = pA - K*qAB*abs(qAB)
+pC = pA - K*qAC*abs(qAC)
+pD = pC - K*qCD*abs(qCD)
+pE = pC - K*0.5*qCE*abs(qCE)
 
 
-print("Lausnin er:", "  ".join(f"{xi:.3f}" for xi in x_lausn))
+# OUTPUT:
+flows = [
+    ("1", "A", q1A),
+    ("A", "B", qAB),
+    ("A", "C", qAC),
+    ("B", "D", qBD),
+    ("C", "D", qCD),
+    ("C", "E", qCE),
+    ("D", "E", qDE),
+    ("E", "0", qE0)
+]
+
+# Pressures at nodes in MPa
+pressures = {
+    "1": p1*1e-6,
+    "A": pA*1e-6,
+    "B": pB*1e-6,
+    "C": pC*1e-6,
+    "D": pD*1e-6,
+    "E": pE*1e-6,
+    "0": p0*1e-6
+}
+
+print("\n=== FLOW SOLUTION (m³/s) ===")
+print(f"{'Edge':<7} | {'Flow':>12}")
+print("-"*22)
+for u, v, q in flows:
+    print(f"{u}->{v:<4} | {q:12.6f}")
+
+print("\n=== PRESSURE SOLUTION (MPa) ===")
+print(f"{'Node':<5} | {'Pressure':>12}")
+print("-"*22)
+for node, p in pressures.items():
+    print(f"{node:<5} | {p:12.6f}")
 
 if draw_graph:
-    # Extract solved flows
-    q1A, qAB, qAC, qBD, qCD, qCE, qDE, qE0 = x_lausn
-
-    # Define edges (direction = positive direction)
-    edges = [
-        ("1", "A", q1A),
-        ("A", "B", qAB),
-        ("A", "C", qAC),
-        ("B", "D", qBD),
-        ("C", "D", qCD),
-        ("C", "E", qCE),
-        ("D", "E", qDE),
-        ("E", "0", qE0)
-    ]
-
-    # Compute pressures using the energy balance equation
-    # p1 and p0 must match your F() function
-    p1 = 4.2 * 10**6
-    p0 = 0
-
-    pressures = {
-        "1": p1,
-        "A": p1 - q1A*abs(q1A),
-        "B": p1 - q1A*abs(q1A) - qAB*abs(qAB),
-        "C": p1 - q1A*abs(q1A) - qAC*abs(qAC),
-        "D": p1 - q1A*abs(q1A) - qAC*abs(qAC) - qCD*abs(qCD),
-        "E": p1 - q1A*abs(q1A) - qAC*abs(qAC) - 0.5*qCE*abs(qCE),
-        "0": p0
-    }
-
-    # Node layout for plotting
     positions = {
         "1": (0, 2),
         "A": (1, 2),
         "B": (2, 2),
         "C": (1, 1),
         "D": (2, 1),
-        "E": (1, 0),
-        "0": (0, 0)
+        "E": (1, 0.5),
+        "0": (0, 0.5)
     }
+    plot_pressure_flow_graph(flows, pressures, positions, node_cmap="bright_plasma")
 
-    # Call your plotting function
-    plot_pressure_flow_graph(edges, pressures, positions)
