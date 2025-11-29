@@ -1,7 +1,7 @@
 import numpy as np
 import math
 
-draw_graph = True
+draw_graph = False
 if draw_graph: # fyrir yfirfarara ef þið viljið keyra án þess að hafa auka graf kóðann:)
     from pipeSystemGraf import plot_pressure_flow_graph
 
@@ -62,6 +62,7 @@ def newtonSearch(F, J, x0, tolerance):
     while np.linalg.norm(x-x_old)>tolerance:
         x_old = x
         x = x_old - np.linalg.solve(J(x), F(x))
+
     return x
 
 
