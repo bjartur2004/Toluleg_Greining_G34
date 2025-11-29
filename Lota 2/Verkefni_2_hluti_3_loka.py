@@ -15,8 +15,6 @@ def qE0(t):
     return A*np.cos(w*t) + B*np.sin(w*t) + C
 
 
-
-
 r = 0.05
 nu = 1e-3
 L = 100
@@ -68,26 +66,26 @@ for i,t in enumerate(t_100):
     p1_allt[i] = find_p1(q_allt[i])
 
 
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10,8), sharex=True)
 
-
-fig, ax1 = plt.subplots(figsize=(10,5))
-
-ax1.plot(t_100, q_allt, label="qE0(t)", color="blue")
-ax1.set_xlabel("Tími [klst]")
+# --- Upper plot: qE0(t) ---
+ax1.plot(t_100, q_allt, color="blue")
 ax1.set_ylabel("qE0 [m³/s]", color="blue")
 ax1.tick_params(axis="y", labelcolor="blue")
+ax1.set_title("qE0(t) og samsvarandi p1(t)")
 
-ax2 = ax1.twinx()
-ax2.plot(t_100, p1_allt, label="p1(t)", color="red")
+# --- Lower plot: p1(t) ---
+ax2.plot(t_100, p1_allt, color="red")
+ax2.set_xlabel("Tími [klst]")
 ax2.set_ylabel("p1 [Pa]", color="red")
 ax2.tick_params(axis="y", labelcolor="red")
 
-plt.title("qE0(t) og samsvarandi p1(t)")
 plt.tight_layout()
 plt.show()
+
 midgildi = len(t_100)//2
 
 print("\n--- Niðurstöður ---")
-print(f"Fyrsta gildi :  t = {t_100[0]:.2f}   q = {q_allt[0]:.4f}   p1 = {p1_allt[0]:.4f}")
-print(f"Miðju gildi  :  t = {t_100[midgildi]:.2f}   q = {q_allt[midgildi]:.4f}   p1 = {p1_allt[midgildi]:.4f}")
-print(f"Síðasta gildi:  t = {t_100[-1]:.2f}   q = {q_allt[-1]:.4f}   p1 = {p1_allt[-1]:.4f}")
+print(f"Fyrsta gildi :  t = {t_100[0]:.2f}   qe0 = {q_allt[0]:.4f}   p1 = {p1_allt[0]:.2f}")
+print(f"Miðju gildi  :  t = {t_100[midgildi]:.2f}   q = {q_allt[midgildi]:.4f}   p1 = {p1_allt[midgildi]:.2f}")
+print(f"Síðasta gildi:  t = {t_100[-1]:.2f}   qe0 = {q_allt[-1]:.4f}   p1 = {p1_allt[-1]:.2f}")
