@@ -82,7 +82,7 @@ def plot_pressure_flow_graph(edges, pressures, positions,
     plt.tight_layout()
     plt.show()
 
-
+# prufu setup
 if __name__ == "__main__":
     edges = [
         ("A", "B", 10),
