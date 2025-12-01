@@ -19,13 +19,10 @@ def eulersolver(y0, T, n):
 def eulerstep(y, h):
     return y + h * f(y)
 
-g =  9.81
-l = 2
 
 def f(y):
-    theta = 0
-    theta_diffrad = 0.2
-
+    l = 2
+    g =  9.81   
     y1= y[0]
     y2 = y[1]
     y1_diffrad = y2
