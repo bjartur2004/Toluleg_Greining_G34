@@ -69,5 +69,3 @@ if run == 1:
     plt.plot(t_vals, y[:,1], label='y2')
     plt.legend()
     plt.show()
-
-
