@@ -9,7 +9,7 @@ if run == 0:
         return 2*y*t
 
     # for non vector problems
-    def rungeKutta(dy, y0, T, h):
+    def rungeKutta(dy, y0, T, h): 
         y = [y0]
         t0 = T[0] if type(T) is list else 0
         T = T[1] if type(T) is list else T
