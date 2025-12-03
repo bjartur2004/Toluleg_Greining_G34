@@ -35,7 +35,7 @@ def ydt(y, t):
 
 
 def rungeKutta(dy, y0, T, h):
-    y = [np.array(y0, dtype=float)]
+    y = [np.array(y0, dtype=float)] 
     t0 = T[0] if type(T) is list else 0
     T = T[1] if type(T) is list else T
     for t in np.arange(t0, T, h):
