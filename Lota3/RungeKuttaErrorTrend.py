@@ -1,6 +1,7 @@
 # finna skekkju trendið þegar n breitist
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 
 def ydt(y, t):
     y1, y2 = y
@@ -24,24 +25,34 @@ def rungeKuttaLastElement(dy, y0, T, n):
     
     return yi
 
-y0 = np.array([1,1])
-T = 10
-
+def randInitialPosition():
+    return (np.random.rand(2)-0.5)*4*np.pi
+T = 20
 n = np.array([200, 400, 800, 1600, 3200, 6400])
 N = 10*max(n)
+N_OF_INITIAL_POSITIONS = 3
 
-YT = rungeKuttaLastElement(ydt, y0, T, N)
+Y0 = [randInitialPosition() for _ in range(N_OF_INITIAL_POSITIONS)]
+
+YT = [rungeKuttaLastElement(ydt, y0, T, N) for y0 in Y0]
 
 error = []
-for ni in n:
-    error.append(np.linalg.norm(rungeKuttaLastElement(ydt, y0, T, ni) - YT))
+for pidx in range(N_OF_INITIAL_POSITIONS):
+    error.append([])
+    for ni in n:
+        error[pidx].append(np.linalg.norm(rungeKuttaLastElement(ydt, Y0[pidx], T, ni) - YT[pidx]))
 
 logError = np.log10(error)
 logh = np.log10(T/n)
+colors = cm.rainbow(np.linspace(0, 1, len(n)))
+for logerror_for_initial_pos, color in zip(error, colors):
+    plt.scatter(logh, logerror_for_initial_pos, color=color)
 
-plt.scatter(logh, logError)
 
-exponent, offset = np.polyfit(logh, logError, 1)
+loghTiled = np.tile(logh, N_OF_INITIAL_POSITIONS)
+logErrorFlat = logError.flatten()
+print(np.shape(loghTiled), np.shape(logErrorFlat))
+exponent, offset = np.polyfit(loghTiled, logErrorFlat, 1)
 print("Exponent:", exponent)
 
 logFitH = np.array([min(logh), max(logh)])
@@ -49,6 +60,6 @@ logFitErr = exponent * logFitH + offset
 
 plt.plot(logFitH, logFitErr)
 
-plt.text(-2,-2,f"Halli: {exponent:.3f}")
+plt.text(-1.5,6,f"Halli: {exponent:.3f}")
 
 plt.show()

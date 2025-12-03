@@ -46,7 +46,6 @@ def rungeKutta(dy, y0, T, h):
         k3 = dy(yi + half_h * k2, t + half_h)
         k4 = dy(yi + h * k3, t + h)
         y.append(yi+h/6*(k1+2*k2+2*k3+k4))
-
     return y
 
 T = 10
