@@ -11,7 +11,7 @@ L2 = 1.0   # Length of second rod
 g  = 9.81  # Gravity
 
 # Initial state: [theta1, theta2, omega1, omega2]
-y0 = np.array([np.pi/2, np.pi/2, 0.0, 0.0])
+y0 = np.array([np.pi*0.25, np.pi*0.25, 0.0, 0.0])
 
 def ydt(y, t):
     theta1, theta2, omega1, omega2 = y
@@ -49,7 +49,7 @@ def rungeKutta(dy, y0, T, h):
 
     return y
 
-T = 10
+T = 20
 h = 0.01
 t_vals = np.arange(0, T+h, h)
 y = np.array(rungeKutta(ydt, y0, T, h))
