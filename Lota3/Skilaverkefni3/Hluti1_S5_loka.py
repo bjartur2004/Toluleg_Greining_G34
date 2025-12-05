@@ -33,7 +33,8 @@ def rk_lausn(y0, T, n):
 
     return t, w
 
-
+#Fyrra skilyrði
+#theta0 = np.pi/12
 theta0 = np.pi/2    
 thetadiffrað0 = 0          
 T = 20
