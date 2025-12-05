@@ -45,11 +45,11 @@ def rungeKutta(dy, y0, T, h):
 
     return y
 
-T = 10
+T = 15
 h = 0.02
 
-N = 1000 # number of pengelums
-variation = 0.0001
+N = 2 # number of pengelums
+variation = 0.001
 # Initial state: [theta1, theta2, omega1, omega2], [...]
 Y0 = np.array([[np.pi/2+variation*i, np.pi/2+variation*i, 0.0, 0.0] for i in range(N)])
 

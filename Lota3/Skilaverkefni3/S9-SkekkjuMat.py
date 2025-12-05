@@ -44,18 +44,30 @@ def rungeKuttaLastElement(dy, y0, T, n):
     
     return yi
 
-def randInitialPosition():
-    angle = (np.random.rand(2)-0.5)*2*np.pi * 0.25
-    speed = (np.random.rand(2)-0.5)*2*np.pi * 0
-    return np.array([angle[0],speed[0],angle[1],speed[1]])
+# við búum til mismunandi gildi með því að búa til tveggja laga tré
+# af valmöguleikum fyrir angles og para þá saman þangað til að við
+# erum komin með nógu mörg pör.
+# Við höfum hraðan alltaf núll í upphafsstöðu
+def initialPositionsTree(n_positions, angle_range):
+    levels = int(np.ceil(np.log2(n_positions)))
+    leaves = 2**levels
+    angles = np.linspace(-angle_range, angle_range, leaves)
+
+    Y0 = []
+    for i in range(leaves):
+        for j in range(leaves):
+            Y0.append(np.array([angles[i], 0.0, angles[j], 0.0]))
+            if len(Y0) >= n_positions:
+                return Y0
+    
+    return Y0
 
 T = 20
 n = np.array([200, 400, 800, 1600, 3200, 6400])
-N = 10*max(n)
-N_OF_INITIAL_POSITIONS = 10
+N = 10 * max(n)
+N_OF_INITIAL_POSITIONS = 30
 
-
-Y0 = [randInitialPosition() for _ in range(N_OF_INITIAL_POSITIONS)]
+Y0 = initialPositionsTree(N_OF_INITIAL_POSITIONS, 0.7*np.pi)
 
 YT = [rungeKuttaLastElement(ydot2, y0, T, N) for y0 in Y0]
 
@@ -67,9 +79,21 @@ for pidx in range(N_OF_INITIAL_POSITIONS):
 
 logError = np.log10(error)
 logh = np.log10(T/n)
-colors = cm.rainbow(np.linspace(0, 1, N_OF_INITIAL_POSITIONS))
-for logerror_for_initial_pos, color in zip(logError, colors):
-    plt.scatter(logh, logerror_for_initial_pos, color=color)
+
+last_errors = logError[:, 0] # we swich from n to h, so order flips          
+sorted_indices = np.argsort(last_errors)  
+
+cmap = cm.viridis
+norm = plt.Normalize(vmin=last_errors.min(), vmax=last_errors.max())
+mapped_colors = cmap(norm(last_errors))     
+
+print("sorted indices:", sorted_indices)
+print("sorted final errors:", last_errors[sorted_indices])
+
+plt.figure(figsize=(9,5))
+for z, idx in enumerate(sorted_indices):   
+    c = mapped_colors[idx]
+    plt.scatter(logh, logError[idx], color=c, s=40, edgecolor='k', linewidth=0.3, zorder=z)
 
 
 loghTiled = np.tile(logh, N_OF_INITIAL_POSITIONS)
@@ -81,8 +105,14 @@ print("Exponent:", exponent)
 logFitH = np.array([min(logh), max(logh)])
 logFitErr = exponent * logFitH + offset
 
-plt.plot(logFitH, logFitErr)
+#plt.plot(logFitH, logFitErr)
 
-plt.text(-1.5,-6,f"Halli: {exponent:.3f}")
+#plt.text(-1.5,-6,f"Halli: {exponent:.3f}")
+
+plt.title("Endapunkts skekksja með tilliti til skref stærðar")
+plt.xlabel("h (skrefa stærð) [log10]")
+plt.ylabel("Endapunkts Skekkja [log10]")
 
 plt.show()
+
+
