@@ -96,3 +96,15 @@ ani = FuncAnimation(fig, update, frames=len(t_vals),
                     init_func=init, blit=True, interval=10)
 
 plt.show()
+
+# ---- Plotting theta1(t) and theta2(t) ----
+plt.figure(figsize=(10,5))
+
+plt.plot(t_vals, y[:,0], label=r'$\theta_1(t)$')
+plt.plot(t_vals, y[:,1], label=r'$\theta_2(t)$')
+
+plt.xlabel('t')
+plt.ylabel('Horn (rad)')
+plt.grid(True)
+plt.legend()
+plt.show()
