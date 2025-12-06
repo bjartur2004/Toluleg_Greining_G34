@@ -1,21 +1,22 @@
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+from matplotlib.animation import FuncAnimation, FFMpegWriter
+mpl.rcParams['animation.ffmpeg_path'] = r"C:\ffmpeg\bin\ffmpeg.exe"
 
 
-# Constants for 3-body problem
 m1 = 1.0
 m2 = 1.0
 m3 = 1.0
-G  = 1.0  # Gravitational constant
+G  = 1.0  
 
-x1, y1 = 0.97000436, -0.24308753
-x2, y2 = -0.97000436, 0.24308753
-x3, y3 = 0.0, 0.0
+x1, y1 = 0.970004336128 , -0.243087053000
+x2, y2 = -0.970004336128 , 0.243087053000
+x3, y3 = 0.000000000000 , 0.000000000000
 
-vx1, vy1 = 0.4662036850, 0.4323657300
-vx2, vy2 = 0.4662036850, 0.4323657300
-vx3, vy3 = -0.93240737, -0.86473146
+vx1, vy1 = 0.466203685012 , 0.432365730000
+vx2, vy2 = 0.466203685012 , 0.432365730000
+vx3, vy3 = -0.932407370024 , -0.864731460000
 
 y0 = np.array([x1, y1, x2, y2, x3, y3,
                vx1, vy1, vx2, vy2, vx3, vy3])
@@ -23,15 +24,14 @@ y0 = np.array([x1, y1, x2, y2, x3, y3,
 
 
 def ydt(y, t):
-    # Unpack positions and velocities
     x1, y1, x2, y2, x3, y3, vx1, vy1, vx2, vy2, vx3, vy3 = y
     
-    # Compute pairwise distances
+    # Fjarlægðir
     r12 = np.sqrt((x2-x1)**2 + (y2-y1)**2)
     r13 = np.sqrt((x3-x1)**2 + (y3-y1)**2)
     r23 = np.sqrt((x3-x2)**2 + (y3-y2)**2)
     
-    # Compute accelerations using Newton's law of gravitation
+    # Hröðun
     ax1 = G * (m2*(x2-x1)/r12**3 + m3*(x3-x1)/r13**3)
     ay1 = G * (m2*(y2-y1)/r12**3 + m3*(y3-y1)/r13**3)
     
@@ -60,7 +60,7 @@ def rungeKutta(dy, y0, T, h):
 
     return y
 
-T = 20
+T = 16
 h = 0.02
 t_vals = np.arange(0, T+h, h)
 y = np.array(rungeKutta(ydt, y0, T, h))
@@ -74,7 +74,6 @@ def plot_three_body(y, t_vals, trail=True):
     traces = [[] for _ in range(n_bodies)] if trail else None
 
     fig, ax = plt.subplots()
-    #margin = 1.5 * max(np.max(np.abs(y[:,0:6])), 1)
     margin = 2
     ax.set_xlim(-margin, margin)
     ax.set_ylim(-margin, margin)
@@ -104,6 +103,8 @@ def plot_three_body(y, t_vals, trail=True):
 
     ani = FuncAnimation(fig, update, frames=len(t_vals),
                         init_func=init, blit=True, interval=10)
+
+    ani.save("TriggjaMassaKerfiMedHandahofskendUpphafsgildi.mp4", writer=FFMpegWriter(fps=50))
     plt.show()
 
 

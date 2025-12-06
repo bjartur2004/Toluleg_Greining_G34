@@ -103,4 +103,4 @@ def update(frame):
 ani = FuncAnimation(fig, update, frames=len(t_vals),
                     init_func=init, blit=True, interval=10)
 
-ani.save("nakvaemariPendull.mp4", writer=FFMpegWriter(fps=24))
+ani.save("nakvaemariPendull.mp4", writer=FFMpegWriter(fps=60))

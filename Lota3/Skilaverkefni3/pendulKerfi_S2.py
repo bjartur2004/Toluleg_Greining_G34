@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from eulerstep import eulerstep   # undirforrit 1
+from eulerstep import eulerstep
 
 def pendulum_euler(theta0, dtheta0, T, n):
     
