@@ -27,10 +27,24 @@ print(f"u = {u}")
 x = [a+h*i for i in range(n)]
 y = [cos(xi)+sin(xi) for xi in x]
 
-plt.plot(x,u, ".")
-plt.plot(x,y)
-plt.legend(["Nálgun [u]", "Nálvæm lausn [y]"])
+e = [np.linalg.norm(y[i]-u[i]) for i in range(n)]
+
+# plot
+fig, ax1 = plt.subplots()
+
+ax1.plot(x, u, ".", label="Nálgun [u]")
+ax1.plot(x, y, label="Nákvæm lausn [y]")
+ax1.set_xlabel("x")
+ax1.set_ylabel("u, y")
+
+ax2 = ax1.twinx()
+ax2.plot(x, e, "r--", alpha=0.5, label="Skekkja [e]")
+ax2.set_ylabel("Skekkja |y−u|", color="r")
+
+lines, labels = ax1.get_legend_handles_labels()
+lines2, labels2 = ax2.get_legend_handles_labels()
+ax1.legend(lines + lines2, labels + labels2, loc="upper right")
+
 plt.title("Lausn Við Dæmi 4")
-plt.xlabel("x")
 plt.show()
 
