@@ -77,8 +77,8 @@ def b(n,m):
         b[k] = -2*h*P/(L*delta*K)
     return b
 
-n = 10
-m = 10
+n = 100
+m = 100
 u = np.linalg.solve(A(n,m), b(n,m))
 u_corrected = u + 20 
 
@@ -90,11 +90,6 @@ print(f"u max: {max(u_corrected)}")
 import matplotlib.pyplot as plt
 
 def plot_heatmap(u, n, m):
-    """
-    Plot a heat map of a solution vector u of size n*m.
-    Assumes k = i + j*m ordering.
-    """
-
     # Reshape into a 2D field (rows = n, cols = m)
     U = u.reshape((n, m))
 
