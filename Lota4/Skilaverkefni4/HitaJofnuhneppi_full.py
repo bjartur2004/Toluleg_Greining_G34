@@ -8,6 +8,8 @@ K = 1.68
 H = 0.005
 delta = 0.1 #cm
 
+Power_L = 2 #cm
+
 def A(n,m):
     A = np.zeros([n*m, n*m])
     h = L/(n-1)
@@ -39,7 +41,7 @@ def A(n,m):
 
     # vinstri efri hlið
     i = 0
-    for j in range(ceil(n/2), n):
+    for j in range(ceil(n*(Power_L/L)), n):
         k = i+j*m
         A[k,k] =     3-(2*h*H)/K
         A[k,k+1] = -4
@@ -47,7 +49,7 @@ def A(n,m):
 
     # vinstri neðri hlið
     i = 0
-    for j in range(0, n-ceil(n/2)+1):
+    for j in range(0, ceil(n*(Power_L/L))):
         k = i+j*m
         A[k,k] =    -3
         A[k,k+1] =  4
@@ -70,24 +72,20 @@ def b(n,m):
     h = L/(n-1)
 
     i = 0
-    for j in range(n-ceil(n/2)):
+    for j in range(ceil(n*(Power_L/L))):
         k = i+j*m
         b[k] = -2*h*P/(L*delta*K)
     return b
 
-
-print(A(5,5))
-print("\n")
-print(b(5,5))
-
 n = 10
 m = 10
 u = np.linalg.solve(A(n,m), b(n,m))
+u_corrected = u + 20 
 
 print("\n")
-print(u)
+print(u_corrected)
 
-
+print(f"u max: {max(u_corrected)}")
 
 import matplotlib.pyplot as plt
 
@@ -108,4 +106,4 @@ def plot_heatmap(u, n, m):
     plt.ylabel('y direction')
     plt.show()
 
-plot_heatmap(u,n,m)
+plot_heatmap(u_corrected,n,m)
