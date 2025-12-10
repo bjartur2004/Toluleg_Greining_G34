@@ -72,7 +72,7 @@ def b(n,m):
     i = 0
     for j in range(n-ceil(n/2)):
         k = i+j*m
-        b[k] = -2*h*P/(L/delta*K)
+        b[k] = -2*h*P/(L*delta*K)
     return b
 
 
