@@ -1,15 +1,6 @@
 import numpy as np
 from math import ceil
 
-"""
-P = 5
-L = 2 #cm
-K = 1.68
-H = 0.005
-delta = 0.1 #cm
-
-Power_L = 2 #cm
-"""
 def A(n,m,arguments):
     P, L, K, H, delta, Power_L, ambient_tempeature = arguments
 
@@ -85,6 +76,6 @@ def b(n,m, arguments):
 def solve_u(n,m,arguments): # argumens should be [P,L,K,H,Delta,Power_L, ambient_tempeature]
     P, L, K, H, delta, Power_L, ambient_tempeature = arguments
     u = np.linalg.solve(A(n,m, arguments), b(n,m, arguments))
-    u_corrected = u + 20 
+    u_corrected = np.array(u) + 20 
 
     return u_corrected

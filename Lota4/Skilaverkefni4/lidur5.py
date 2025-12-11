@@ -70,7 +70,7 @@ def b(n,m):
     b = np.zeros([n*m])
     h = L/(n-1)
 
-    # powerið - sem er neðri helmingurinn vinstra megin
+    # powerið (neðri helmingurinn vinstra megin)
     i = 0
     for j in range(0, ceil(n/2)):
         k = i + j*m
