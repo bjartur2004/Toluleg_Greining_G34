@@ -3,133 +3,129 @@ from math import ceil
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-
+# Fastar
 P = 5
-L = 2.0       # cm
+Lx = 4.0      # breidd
+Ly = 4.0      # hæð
+Lchip = 2.0   # lengd örgjörva (2 cm FAST)
 K = 1.68
 H = 0.005
-delta = 0.1   # cm
+delta = 0.1
+
 
 def A(n, m):
     A = np.zeros((n*m, n*m))
-    h = L / (n - 1)
+    h = Lx / (m - 1)     
 
     # neðri hluti
     j = 0
     for i in range(1, m-1):
         k = i + j*m
-        A[k, k]     = -3 + (2*h*H)/K
-        A[k, k+m]   = 4
-        A[k, k+2*m] = -1
+        A[k,k]     = -3 + (2*h*H)/K
+        A[k,k+m]   = 4
+        A[k,k+2*m] = -1
 
     # efri hluti
     j = n-1
     for i in range(1, m-1):
         k = i + j*m
-        A[k, k]     =  3 - (2*h*H)/K
-        A[k, k-m]   = -4
-        A[k, k-2*m] =  1
+        A[k,k]     =  3 - (2*h*H)/K
+        A[k,k-m]   = -4
+        A[k,k-2*m] =  1
 
     # hægri hluti
     i = m-1
     for j in range(n):
         k = i + j*m
-        A[k, k]   = 3 - (2*h*H)/K
-        A[k, k-1] = -4
-        A[k, k-2] =  1
+        A[k,k]   = 3 - (2*h*H)/K
+        A[k,k-1] = -4
+        A[k,k-2] =  1
 
-    # efri helmingur vinstra megin
+    # vinstra megin 
     i = 0
-    for j in range(ceil(n/2), n):
+    for j in range(n):
         k = i + j*m
-        A[k, k]   = 3 - (2*h*H)/K
-        A[k, k+1] = -4
-        A[k, k+2] =  1
+        A[k,k]   = -3
+        A[k,k+1] =  4
+        A[k,k+2] = -1
 
-    # neðri helmingur vinstra megin 
-    i = 0
-    for j in range(0, ceil(n/2)):
-        k = i + j*m
-        A[k, k]   = -3
-        A[k, k+1] =  4
-        A[k, k+2] = -1
-
-    # innri punktar 
+    # innri punktar
     for i in range(1, m-1):
         for j in range(1, n-1):
             k = i + j*m
-            A[k, k]     = -4 - (2*H*h*h)/(K*delta)
-            A[k, k-1]   = 1
-            A[k, k+1]   = 1
-            A[k, k-m]   = 1
-            A[k, k+m]   = 1
+            A[k,k]   = -4 - (2*H*h*h)/(K*delta)
+            A[k,k-1] = 1
+            A[k,k+1] = 1
+            A[k,k-m] = 1
+            A[k,k+m] = 1
 
     return A
 
 
-def solve_chip_location(n, m, y0_frac, y1_frac):
-    h = L/(n-1)
-
+def solve_chip_location(n, m, y_center_frac):
     A_mat = A(n, m)
+    b = np.zeros(n*m)
 
-    b_vec = np.zeros(n*m)
+    h = Lx / (m - 1)
 
-    j0 = int(y0_frac * (n-1))
-    j1 = int(y1_frac * (n-1))
+    chip_points = int((Lchip / Ly) * (n - 1))
 
-    for j in range(j0, j1 + 1):
+    # Miðja örgjörvans í j-hnitum
+    j_center = int(y_center_frac * (n - 1))
+
+
+    j0 = max(0, j_center - chip_points // 2)
+    j1 = min(n - 1, j_center + chip_points // 2)
+
+    for j in range(j0, j1+1):
         k = 0 + j*m
-        b_vec[k] = -2*h*P/(L * delta * K)
+        b[k] = -2 * h * P / (Lchip * delta * K)
 
-    u = np.linalg.solve(A_mat, b_vec)
-    u = u + 20 
+    # Leysa jöfnuhneppið
+    u = np.linalg.solve(A_mat, b)
+    return u + 20   # bæta umhverfishita við
 
-    return u
+
 
 def plot3d(u, n, m, title, filename):
     U = u.reshape((n, m))
-
-    x = np.linspace(0, L, m)
-    y = np.linspace(0, L, n)
+    x = np.linspace(0, Lx, m)
+    y = np.linspace(0, Ly, n)
     X, Y = np.meshgrid(x, y)
 
-    fig = plt.figure(figsize=(8, 6))
+    fig = plt.figure(figsize=(8,6))
     ax = fig.add_subplot(111, projection='3d')
-    surf = ax.plot_surface(X, Y, U, cmap='hot', edgecolor='none')
 
+    surf = ax.plot_surface(X, Y, U, cmap='hot', edgecolor='none')
     ax.set_title(title)
     ax.set_xlabel("x (cm)")
     ax.set_ylabel("y (cm)")
     ax.set_zlabel("Hitastig (°C)")
 
     fig.colorbar(surf, shrink=0.6)
-
     fig.savefig(filename, dpi=300)
 
-    plt.close(fig)   
-    plt.show()
-    #plt.show()
-# mismunandi stillingar
-n = m = 80
-configs = [
-    (0.00, 0.25,"[0.00,0.25]"),
-    (0.25, 0.50,"[0.25,0,50]"),
-    (0.40, 0.60,"[0.40,0.60]"),
-    (0.50, 0.75,"[0.50,0.75]"),
-    (0.75, 1.00,"[0.75,1.00]")
-]
+    plt.close(fig)
 
-results = []
-for idx, (y0, y1, name) in enumerate(configs):
-    u = solve_chip_location(n, m, y0, y1)
-    Tmax = np.max(u)
-    results.append((name, Tmax))
 
-    print(f"{name:20s} → max T = {Tmax:.3f}°C")
 
-    filename = f"heatmap_{idx}.png"   
-    plot3d(u, n, m, name, filename)
+if __name__ == "__main__":
+    n = m = 80
 
-best = min(results, key=lambda x: x[1])
-print("\nBesta stilling til að lágmarka hámarks hitastig:")
-print(f"{best[0]}  with  Tmax = {best[1]:.3f}°C")
+    # Mismunandi y-miðjur örgjörvans (0 → neðst, 1 → efst)
+    centers = [0.10, 0.30, 0.50, 0.70, 0.90]
+
+    results = []
+
+    for idx, yc in enumerate(centers):
+        u = solve_chip_location(n, m, yc)
+        Tmax = np.max(u)
+        results.append((yc, Tmax))
+
+        print(f"Miðja = {yc:.2f}  →  T_max = {Tmax:.3f} °C")
+        plot3d(u, n, m, f"Liður 6 – miðja {yc:.2f}", f"lidur6_{idx}.png")
+
+    # Finnum bestu staðsetninguna
+    best = min(results, key=lambda x: x[1])
+    print("\nBesta staðsetningin")
+    print(f"y_center = {best[0]:.2f}  →  T_max = {best[1]:.3f} °C")
