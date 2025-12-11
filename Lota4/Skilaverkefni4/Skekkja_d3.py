@@ -119,7 +119,6 @@ if __name__ == "__main__":
     
     plt.figure(figsize=(7,5))
     plt.loglog(hs, villa, 'o-', label='Skekkja')
-    plt.gca().invert_xaxis()  
 
     
     p, C = np.polyfit(np.log(hs), np.log(villa), 1)
@@ -134,6 +133,8 @@ if __name__ == "__main__":
     plt.grid(True, which="both", ls="--", alpha=0.6)
     plt.legend()
     plt.tight_layout()
+    plt.xticks([10**k for k in np.arange(np.floor(np.log10(hs.min())),
+                                        np.ceil(np.log10(hs.max())) + 1, 0.5)])
     plt.show()
 
 print(f"\nHallatala p ≈ {p:.4f}")
