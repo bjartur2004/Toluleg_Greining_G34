@@ -1,7 +1,7 @@
 import numpy as np
 from math import ceil
 
-# Consts
+"""
 P = 5
 L = 2 #cm
 K = 1.68
@@ -9,8 +9,10 @@ H = 0.005
 delta = 0.1 #cm
 
 Power_L = 2 #cm
+"""
+def A(n,m,arguments):
+    P, L, K, H, delta, Power_L, ambient_tempeature = arguments
 
-def A(n,m):
     A = np.zeros([n*m, n*m])
     h = L/(n-1)
 
@@ -67,7 +69,9 @@ def A(n,m):
     return A
 
 
-def b(n,m):
+def b(n,m, arguments):
+    P, L, K, H, delta, Power_L, ambient_tempeature = arguments
+
     b = np.zeros([n*m])
     h = L/(n-1)
 
@@ -77,28 +81,10 @@ def b(n,m):
         b[k] = -2*h*P/(L*delta*K)
     return b
 
-n = 100
-m = 100
-u = np.linalg.solve(A(n,m), b(n,m))
-u_corrected = u + 20 
 
-print("\n")
-print(u_corrected)
+def solve_u(n,m,arguments): # argumens should be [P,L,K,H,Delta,Power_L, ambient_tempeature]
+    P, L, K, H, delta, Power_L, ambient_tempeature = arguments
+    u = np.linalg.solve(A(n,m, arguments), b(n,m, arguments))
+    u_corrected = u + 20 
 
-print(f"u max: {max(u_corrected)}")
-
-import matplotlib.pyplot as plt
-
-def plot_heatmap(u, n, m):
-    # Reshape into a 2D field (rows = n, cols = m)
-    U = u.reshape((n, m))
-
-    plt.figure(figsize=(5,4))
-    plt.imshow(U, cmap='hot', origin='lower')
-    plt.colorbar(label='Temperature (°C)')
-    plt.title('Temperature Distribution')
-    plt.xlabel('x direction')
-    plt.ylabel('y direction')
-    plt.show()
-
-plot_heatmap(u_corrected,n,m)
+    return u_corrected
