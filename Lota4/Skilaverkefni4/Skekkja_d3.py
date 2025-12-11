@@ -117,24 +117,33 @@ if __name__ == "__main__":
     villa = np.array(villa)
 
     
-    plt.figure(figsize=(7,5))
-    plt.loglog(hs, villa, 'o-', label='Skekkja')
+    plt.figure(figsize=(8,6))
 
-    
-    p, C = np.polyfit(np.log(hs), np.log(villa), 1)
 
-    
-    villa_fit = np.exp(C) * hs**p
-    plt.loglog(hs, villa_fit, '--', label=f"Best-fit lína (p ≈ {p:.2f})")
+plt.loglog(hs, villa, 'o-', linewidth=2, markersize=8,)
 
-    plt.xlabel("h")
-    plt.ylabel("Skekkja")
-    plt.title("Samleitni – sýnir að skekkjan er O(h²)")
-    plt.grid(True, which="both", ls="--", alpha=0.6)
-    plt.legend()
-    plt.tight_layout()
-    plt.xticks([10**k for k in np.arange(np.floor(np.log10(hs.min())),
-                                        np.ceil(np.log10(hs.max())) + 1, 0.5)])
-    plt.show()
+
+p, C = np.polyfit(np.log(hs), np.log(villa), 1)
+villa_fit = np.exp(C) * hs**p
+
+
+plt.loglog(hs, villa_fit, '--', linewidth=2,
+           label=fr'Best-fit lína  (p ≈ {p:.2f})')
+
+plt.grid(True, which="both", ls="--", alpha=0.6)
+
+plt.xlabel(r'$h = hx =  hy$', fontsize=14)
+plt.ylabel(r'Skekkja', fontsize=14)
+
+plt.title(r'Skekkjumat', fontsize=16)
+
+
+plt.xticks(hs, [f"{val:.3f}" for val in hs], fontsize=12, rotation=45)
+plt.yticks(fontsize=12)
+
+plt.legend(fontsize=13)
+plt.tight_layout()
+plt.show()
 
 print(f"\nHallatala p ≈ {p:.4f}")
+
