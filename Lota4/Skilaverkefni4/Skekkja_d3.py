@@ -106,7 +106,7 @@ if __name__ == "__main__":
         print(f"Reikna fyrir n = m = {n} ...")
         T_max_n = Tmax_n(n)
         h = Lx / (n - 1)               
-        skekkja = abs(T_max_n - T_max_viðmið) 
+        skekkja = abs(T_max_viðmið - T_max_n) 
 
         hs.append(h)
         villa.append(skekkja)
