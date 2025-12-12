@@ -18,3 +18,4 @@ u = HitaJofnuhneppi_full.solve_u(n,m,arguments)
 print(f"u max: {max(u):.4f}")
 
 HitadreifingsPlot.plotHitadreifingu(u,n,m, arguments, "Hitadreifing með n=m=10")
+
