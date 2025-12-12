@@ -92,7 +92,7 @@ def Tmax_n(n):
 if __name__ == "__main__":
     
     n_viðmið = 200      
-    print(f"Reikna viðmiðunarlausn fyrir n = 200 = {n_viðmið}")
+    print(f"Reikna viðmiðunarlausn fyrir n = {n_viðmið}")
     T_max_viðmið = Tmax_n(n_viðmið)
     print(f"T_max (viðmið) ≈ {T_max_viðmið:.6f} °C\n")
 
@@ -117,7 +117,8 @@ if __name__ == "__main__":
     villa = np.array(villa)
 
     
-    plt.figure(figsize=(8,6))
+
+plt.figure(figsize=(8,6))
 
 
 plt.loglog(hs, villa, 'o-', linewidth=2, markersize=8,)
@@ -128,7 +129,7 @@ villa_fit = np.exp(C) * hs**p
 
 
 plt.loglog(hs, villa_fit, '--', linewidth=2,
-           label=fr'Best-fit lína  (p ≈ {p:.2f})')
+           label=fr'Best-fit lína  (p ≈ {p:.4f})')
 
 plt.grid(True, which="both", ls="--", alpha=0.6)
 
@@ -146,4 +147,7 @@ plt.tight_layout()
 plt.show()
 
 print(f"\nHallatala p ≈ {p:.4f}")
+
+
+
 

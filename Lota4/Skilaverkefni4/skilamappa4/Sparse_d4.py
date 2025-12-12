@@ -78,72 +78,54 @@ def b_vigur(n, m):
     return b
 
 
-
-def Tmax_n(n):
-    m = n
+def solve_heatsink_sparse(n=200, m=200):
     A = A_sparse(n, m)
     b = b_vigur(n, m)
-    u = spsolve(A, b)        
-    T = u + T_úti          
-    return T.max()
-
-
-
-if __name__ == "__main__":
-    
-    n_viðmið = 200      
-    print(f"Reikna viðmiðunarlausn fyrir n = 200 = {n_viðmið}")
-    T_max_viðmið = Tmax_n(n_viðmið)
-    print(f"T_max (viðmið) ≈ {T_max_viðmið:.6f} °C\n")
 
    
-    n_prufur = [10, 20, 30, 40, 50, 60, 70, 80]
+    u = spsolve(A, b)            
+    T = u + T_úti             
 
-    hs = []
-    villa = []
+   
+    Tmax = T.max()
+    kmax = T.argmax()
+    i_max = kmax % m
+    j_max = kmax // m
 
-    for n in n_prufur:
-        print(f"Reikna fyrir n = m = {n} ...")
-        T_max_n = Tmax_n(n)
-        h = Lx / (n - 1)               
-        skekkja = abs(T_max_viðmið - T_max_n) 
+    x_gildi = np.linspace(0, Lx, m)
+    y_gildi = np.linspace(0, Ly, n)
+    x_max = x_gildi[i_max]
+    y_max = y_gildi[j_max]
 
-        hs.append(h)
-        villa.append(skekkja)
-
-        print(f"  h = {h:.5f}, T_max = {T_max_n:.6f}, skekkja = {skekkja:.6e}")
-
-    hs = np.array(hs)
-    villa = np.array(villa)
-
-    
-    plt.figure(figsize=(8,6))
+    print(f"Hæsta hitastig T_max ≈ {Tmax:.4f} °C")
+    print(f"Gerist í punkti (i,j) = ({i_max+1}, {j_max+1}) ≈ (x,y) = ({x_max:.3f}, {y_max:.3f})")
 
 
-plt.loglog(hs, villa, 'o-', linewidth=2, markersize=8,)
+    T_grid = T.reshape((n, m))
+
+    return T_grid, x_gildi, y_gildi
 
 
-p, C = np.polyfit(np.log(hs), np.log(villa), 1)
-villa_fit = np.exp(C) * hs**p
+def plot_mesh(T_grid, x_gildi, y_gildi, title="Hitadreifing (mesh)"):
+    X, Y = np.meshgrid(x_gildi, y_gildi)
+
+    fig = plt.figure(figsize=(7, 5))
+    ax = fig.add_subplot(111, projection='3d')
+    surf = ax.plot_surface(X, Y, T_grid, cmap='hot', edgecolor='k', linewidth=0.2)
+    fig.colorbar(surf, ax=ax, label='Hitastig (°C)')
+    ax.set_title(title)
+    ax.set_xlabel('x (cm)')
+    ax.set_ylabel('y (cm)')
+    ax.set_zlabel('T (°C)')
+    plt.tight_layout()
+    plt.show()
 
 
-plt.loglog(hs, villa_fit, '--', linewidth=2,
-           label=fr'Best-fit lína  (p ≈ {p:.2f})')
-
-plt.grid(True, which="both", ls="--", alpha=0.6)
-
-plt.xlabel(r'$h = hx =  hy$', fontsize=14)
-plt.ylabel(r'Skekkja', fontsize=14)
-
-plt.title(r'Skekkjumat', fontsize=16)
 
 
-plt.xticks(hs, [f"{val:.3f}" for val in hs], fontsize=12, rotation=45)
-plt.yticks(fontsize=12)
+print("n = m = 200 ")
+n = m = 200
+T200, x200, y200 = solve_heatsink_sparse(n, m)
 
-plt.legend(fontsize=13)
-plt.tight_layout()
-plt.show()
 
-print(f"\nHallatala p ≈ {p:.4f}")
-
+plot_mesh(T200, x200, y200, title="Hitadreifing fyrir m = n = 200 (sparse)")
