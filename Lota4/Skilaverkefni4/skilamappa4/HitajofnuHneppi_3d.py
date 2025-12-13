@@ -159,7 +159,6 @@ def b(n, m, p, arguments):
             if x0 <= x <= x1 and y0 <= y <= y1:
                 row = I(i, j, k)
                 b[row] = q_flux
-
     return b
 
 

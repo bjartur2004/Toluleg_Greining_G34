@@ -4,23 +4,24 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-
 def LeysaCase(case):
     global n, m
-    Power_L = case[0]
-    power_b = case[1]
-
-    P = 5
-    L = 4 #cm
+    P = case
+    Power_L = 2          
+    L = 4                
     K = 1.68
     H = 0.005
-    delta = 0.1 #cm
-    ambient_tempeature = 20 #°C
+    delta = 0.1         
+    ambient_tempeature = 20  
 
-    arguments = [P,L,K,H,delta,Power_L,ambient_tempeature]
+    arguments = [P, L, K, H, delta, Power_L, ambient_tempeature]
 
-    u = HitaJofnuhneppi_Sparce.solve_u(n,m,arguments, PowerAreaBottom=power_b)
+    u = HitaJofnuhneppi_Sparce.solve_u(
+        n, m, arguments,
+        PowerAreaBottom=(L-Power_L)/2,
+    )
     return u
+
 
 def FinnaMaxTemp(case):
     u = LeysaCase(case)
@@ -34,26 +35,26 @@ def root_binary_search(f, I_MIN, I_MAX, tolerance):
     f_min = f(min_bound)
     f_max = f(max_bound)
 
-    while (max_bound - min_bound)/2 > tolerance:
-        m = (max_bound+min_bound)/2
+    while (max_bound - min_bound) / 2 > tolerance:
+        m = (max_bound + min_bound) / 2
         f_m = f(m)
 
-        if f_m * f_max > 0: # ef lausnin er ekki á milli m og max
+        if f_m * f_max > 0:
             max_bound = m
             f_max = f(max_bound)
-
         else:
             min_bound = m
             f_min = f(min_bound)
 
-    # solution found
-    return (min_bound+max_bound)/2
+    return (min_bound + max_bound) / 2
+
 
 n = 50
 m = 50
-maxTemp = 50
-f = lambda L: FinnaMaxTemp([L,0])-maxTemp
+maxTemp = 100
 
-maxL = root_binary_search(f, 0, 4, 1e-2)
+f = lambda P: FinnaMaxTemp(P) - maxTemp
 
-print(maxL)
+maxP = root_binary_search(f, 0, 20, 1e-2)
+
+print(maxP)

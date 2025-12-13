@@ -25,8 +25,8 @@ def LeysaCase(case):
 n = 100
 m = 100
 
-lengths = [1,2]
-poses   = [0, 1 , 2]
+lengths = [1]
+poses   = [0, 1 , 1.5, 2, 3]
 cases = []
 for l in lengths:
     for p in poses:
@@ -46,13 +46,17 @@ for i, l in enumerate(lengths):
         idx = i * n_cols + j
         ax = axes[i, j] if n_rows > 1 and n_cols > 1 else axes[max(i,j)]
         im = ax.imshow(results[idx], origin='lower', aspect='auto', cmap='hot')
-        ax.set_title(f"Length={l}, Pose={p}")
+        ax.set_title(f"Lengd={l}, Fjarlægð frá x-ás={p}")
         ax.axis('off')
+        max_temp = np.max(results[idx])
+        ax.text(0.5, -0.05, f"Hámarks hitastig = {max_temp:.2f} °C",
+                transform=ax.transAxes, ha='center', va='top', fontsize=13)
 
-# Add a colorbar to the side
-fig.subplots_adjust(right=0.85)  # leave 15% on the right for the colorbar
-cbar_ax = fig.add_axes([0.88, 0.15, 0.03, 0.7])  # [left, bottom, width, height]
+fig.subplots_adjust(right=0.85, top=0.8)  
+
+cbar_ax = fig.add_axes([0.88, 0.15, 0.03, 0.8]) 
 cbar = fig.colorbar(im, cax=cbar_ax)
-cbar.set_label("Temperature (°C)")
+cbar.set_label("Hitastig [°C}")
 
+fig.suptitle("Hitadreifing fyrir mismunandi lengdir og staðsetningar", fontsize=20)
 plt.show()
